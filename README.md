@@ -1,0 +1,1 @@
+Xu, M., Baraldi, P., Lu, X., Cannarile, F., & Zio, E. (2019). "Anomaly Detection for Industrial Systems using Generative Adversarial Networks." 4th International Conference on System Reliability and Safety (ICSRS 2019).
