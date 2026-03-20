@@ -45,6 +45,28 @@ git remote add origin https://github.com/wufan118580-commits/ai-learn.git
 
 # 或者如果是 SSH
 git remote add origin git@github.com:wufan118580-commits/ai-learn.git
+git remote set-url origin git@github.com:wufan118580-commits/ai-learn.git
 
 # 验证
 git remote -v
+
+
+# 分支操作
+# 1. 先拉取远程仓库的最新信息（让本地知道远程有了新分支）
+git fetch origin
+
+# 2. 创建并切换到本地 develop 分支，同时与远程分支建立关联
+git checkout -b develop origin/develop
+
+
+# 查看当前分支（* 号所在的就是当前分支）
+git branch
+
+# 应该看到：
+#   main
+# * develop
+
+# 查看本地分支和远程分支的跟踪关系
+git branch -vv
+# 应该看到类似：
+# develop   abc1234 [origin/develop] 你的提交信息
