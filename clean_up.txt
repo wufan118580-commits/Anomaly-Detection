@@ -1,0 +1,21 @@
+df -h
+
+docker system df
+
+docker images
+
+docker ps -a
+
+docker volume ls
+
+# 清理所有未使用的Docker资源
+docker system prune -a -f
+
+# 清理Docker构建缓存
+docker builder prune -a -f
+
+# 查看悬空镜像
+docker images -f "dangling=true"
+
+# 删除悬空镜像
+docker image prune -f
