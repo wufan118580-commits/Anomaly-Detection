@@ -19,3 +19,8 @@ docker images -f "dangling=true"
 
 # 删除悬空镜像
 docker image prune -f
+
+深入检查overlay的具体内容：
+du -sh /var/lib/docker/ 2>/dev/null
+
+find /var/lib/docker -type f -size +100M 2>/dev/null | xargs -I {} du -h {} | sort -hr
