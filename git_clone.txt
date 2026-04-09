@@ -70,3 +70,14 @@ git branch
 git branch -vv
 # 应该看到类似：
 # develop   abc1234 [origin/develop] 你的提交信息
+
+
+# 部署服务器操作
+
+操作	命令	频率
+拉取新 tag	git fetch --tags	每次部署前
+查看可用版本	git tag -l	需要时
+切换版本	git checkout v1.0.0	每次部署
+部署应用	docker run / python app.py	每次部署
+切回分支	git checkout develop	部署完成后
+回滚版本	git checkout v0.9.0	出问题时
