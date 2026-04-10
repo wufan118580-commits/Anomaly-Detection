@@ -1,0 +1,59 @@
+你 push 到 main
+    ↓
+GitHub Actions (云端)
+    ├── 🧪 测试通过
+    ├── 🔨 构建镜像验证
+    └── 🚀 SSH 部署（appleboy/ssh-action）
+            │
+            │  SSH 连接（用你的私钥 + 密码）
+            ▼
+    腾讯云轻量应用服务器
+        ├── git pull 拉取最新代码
+        ├── 写入 .env（从 Secrets 注入密钥）
+        └── docker compose up -d 重启服务
+你需要做的配置（只需操作一次）
+进入 GitHub 仓库 → Settings → Secrets and variables → Actions → New repository secret
+
+Secret 名称	值	说明
+SERVER_HOST	你的服务器IP	如 43.xxx.xxx.xxx
+SERVER_USER	root 或 ubuntu	SSH 登录用户名
+SSH_PRIVATE_KEY	你的SSH私钥	见下方生成方法
+SERVER_PORT	22	SSH 端口
+PROJECT_PATH	/root/workspace	服务器上的项目目录
+DEEPSEEK_API_KEY	sk-xxx...	大模型API密钥
+
+# 在你的电脑上执行（不要有密码）
+ssh-keygen -t ed25519 -C "github-actions-deploy" -f ~/.ssh/deploy_key -N ""
+
+# 公钥内容添加到服务器的 authorized_keys
+# 复制 ~/.ssh/deploy_key.pub 的内容，追加到服务器：
+cat ~/.ssh/deploy_key.pub >> ~/.ssh/authorized_keys
+
+# 私钥内容复制到 GitHub Secrets：
+# cat ~/.ssh/deploy_key   ← 把这个内容粘贴到 SSH_PRIVATE_KEY secret 中
+
+
+问题 2：GitHub Secrets 是什么？如何注入敏感信息？
+简单来说：GitHub Secrets 就是一个安全的"密码保险箱"。
+                    GitHub 仓库 Settings
+                    ┌──────────────────────┐
+                    │ Secrets vault:       │
+                    │  DEEPSEEK_API_KEY =   │  ← 存在这里，加密存储
+                    │  sk-xxxxxxxxxxxxx     │     日志中看不到
+                    └──────────┬───────────┘
+                               │
+                               ▼ 部署时读取
+┌─────────────────────────────────────┐
+│ .yml 文件中:                        │
+│   ${{ secrets.DEEPSEEK_API_KEY }}  │ ← 自动替换为真实值
+└─────────────────────────────────────┘
+         │
+         ▼
+写入服务器 .env 文件:
+  DEEPSEEK_API_KEY=sk-xxxxxxxxxxxxx   ← 只有部署目标机器能看到
+
+为什么这样做？
+方式	安全性	问题
+❌ 写死在 .env 里提交 Git	极危险	任何人都能看到你的 Key，包括 .env.example 里的那个真实 Key（已修复）
+✅ 用 GitHub Secrets	安全	加密存储，Action 日志中会自动遮蔽（显示为 ***）
+✅ 只在运行时注入	最小权限原则	密钥只在部署瞬间出现在目标服务器上
