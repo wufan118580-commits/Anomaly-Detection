@@ -1,0 +1,17 @@
+# 查看 volume 路径
+docker volume inspect workspace_pix2tex_model_cache --format '{{.Mountpoint}}'
+
+# 确认模型文件存在
+ls -lh $(docker volume inspect workspace_pix2tex_model_cache --format '{{.Mountpoint}}')
+
+#删除旧的
+docker volume rm workspace_pix2tex_model_cache
+
+#创建正确名称的
+docker volume create pix2tex_model_cache
+
+#文件复制回去
+cp /tmp/model_backup/* /var/lib/docker/volumes/pix2tex_model_cache/_data/
+
+#确认
+ls -lh /var/lib/docker/volumes/pix2tex_model_cache/_data/

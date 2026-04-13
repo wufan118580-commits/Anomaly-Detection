@@ -1,5 +1,0 @@
-# 查看 volume 路径
-docker volume inspect workspace_pix2tex_model_cache --format '{{.Mountpoint}}'
-
-# 确认模型文件存在
-ls -lh $(docker volume inspect workspace_pix2tex_model_cache --format '{{.Mountpoint}}')
